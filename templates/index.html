@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Counselor Dashboard - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-5">
+            <h1 class="display-4"><i class="fas fa-graduation-cap"></i> Counselor Dashboard</h1>
+            <p class="lead">Comprehensive student performance analysis and reporting system</p>
+            <hr class="my-4">
+            <p>Access consolidated reports, individual student grades, and pass percentage statistics.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">Consolidate Reports</h5>
+                <p class="card-text">Generate consolidated reports for a range of students including SGPA calculation and failed subjects analysis.</p>
+                <a href="{{ url_for('consolidate') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> View Consolidation
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-user fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Student Grade Report</h5>
+                <p class="card-text">View detailed grade reports for individual students with complete subject-wise performance analysis.</p>
+                <a href="{{ url_for('student_report') }}" class="btn btn-success">
+                    <i class="fas fa-arrow-right"></i> Student Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-percentage fa-3x text-info mb-3"></i>
+                <h5 class="card-title">Pass Percentage</h5>
+                <p class="card-text">Calculate pass percentage for student ranges and view detailed statistics including passed and failed students.</p>
+                <a href="{{ url_for('pass_percentage') }}" class="btn btn-info">
+                    <i class="fas fa-arrow-right"></i> Pass Statistics
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> System Features</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-database"></i> Firebase Integration</h6>
+                        <p>Secure cloud-based storage for student data with real-time synchronization.</p>
+                        
+                        <h6><i class="fas fa-calculator"></i> SGPA Calculation</h6>
+                        <p>Automatic calculation of Semester Grade Point Average based on credits and grades.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-chart-line"></i> Performance Analytics</h6>
+                        <p>Comprehensive analysis of student performance including pass/fail statistics.</p>
+                        
+                        <h6><i class="fas fa-file-alt"></i> Detailed Reports</h6>
+                        <p>Generate detailed reports for academic counseling and performance tracking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Note:</strong> Make sure Firebase credentials are properly configured in the <code>firebase-service-account.json</code> file for the application to function correctly.
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Pass Percentage Analysis{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-percentage"></i> Pass Percentage Analysis</h2>
+        <p class="lead">Calculate pass percentage for student ranges and view detailed statistics.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-search"></i> Analyze Range</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="from_htno" class="form-label">From HTNO:</label>
+                        <input type="text" class="form-control" id="from_htno" name="from_htno" 
+                               placeholder="e.g., 17B81A0100 or 18B81A0200" required>
+                        <div class="form-text">Enter the starting Hall Ticket Number</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="to_htno" class="form-label">To HTNO:</label>
+                        <input type="text" class="form-control" id="to_htno" name="to_htno" 
+                               placeholder="e.g., 17B81A0150 or 18B81A0250" required>
+                        <div class="form-text">Enter the ending Hall Ticket Number</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calculator"></i> Calculate Statistics
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Analysis Features</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Overall pass percentage calculation</li>
+                    <li><i class="fas fa-check text-success"></i> Detailed student-wise performance</li>
+                    <li><i class="fas fa-check text-success"></i> SGPA statistics and analysis</li>
+                    <li><i class="fas fa-check text-success"></i> Failed vs passed student comparison</li>
+                    <li><i class="fas fa-check text-success"></i> Performance rankings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if stats %}
+<div class="row mt-5">
+    <!-- Overall Statistics -->
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Overall Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-2">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <h3 class="text-primary">{{ stats.total_students }}</h3>
+                                <small>Total Students</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card border-success">
+                            <div class="card-body">
+                                <h3 class="text-success">{{ stats.passed_students }}</h3>
+                                <small>Passed</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card border-danger">
+                            <div class="card-body">
+                                <h3 class="text-danger">{{ stats.failed_students }}</h3>
+                                <small>Failed</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card border-info">
+                            <div class="card-body">
+                                <h3 class="text-info">{{ stats.pass_percentage }}%</h3>
+                                <small>Pass %</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card border-warning">
+                            <div class="card-body">
+                                <h3 class="text-warning">{{ stats.average_sgpa }}</h3>
+                                <small>Avg SGPA</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card border-secondary">
+                            <div class="card-body">
+                                <h4 class="text-secondary">{{ stats.highest_sgpa }}</h4>
+                                <small>Highest SGPA</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {{ stats.pass_percentage }}%"
+                             aria-valuenow="{{ stats.pass_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ stats.pass_percentage }}% Passed
+                        </div>
+                        <div class="progress-bar bg-danger" role="progressbar" 
+                             style="width: {{ 100 - stats.pass_percentage }}%"
+                             aria-valuenow="{{ 100 - stats.pass_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ 100 - stats.pass_percentage }}% Failed
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passed Students -->
+    {% if passed_students %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-check-circle"></i> Passed Students ({{ passed_students|length }})</h5>
+            </div>
+            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Rank</th>
+                                <th>HTNO</th>
+                                <th>Name</th>
+                                <th>SGPA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in passed_students|sort(attribute='sgpa', reverse=true) %}
+                            <tr>
+                                <td>
+                                    {% if loop.index == 1 %}
+                                        <i class="fas fa-crown text-warning"></i> {{ loop.index }}
+                                    {% elif loop.index <= 3 %}
+                                        <i class="fas fa-medal text-warning"></i> {{ loop.index }}
+                                    {% else %}
+                                        {{ loop.index }}
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ student.htno }}</strong></td>
+                                <td>{{ student.name }}</td>
+                                <td>
+                                    <span class="sgpa-display {% if student.sgpa >= 9.0 %}text-success{% elif student.sgpa >= 8.0 %}text-primary{% elif student.sgpa >= 7.0 %}text-info{% else %}text-warning{% endif %}">
+                                        {{ student.sgpa }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Failed Students -->
+    {% if failed_students %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-times-circle"></i> Failed Students ({{ failed_students|length }})</h5>
+            </div>
+            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>S.No</th>
+                                <th>HTNO</th>
+                                <th>Name</th>
+                                <th>SGPA</th>
+                                <th>Failed Subjects</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in failed_students|sort(attribute='failed_count', reverse=true) %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><strong>{{ student.htno }}</strong></td>
+                                <td>{{ student.name }}</td>
+                                <td>
+                                    <span class="sgpa-display text-danger">{{ student.sgpa }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger">{{ student.failed_count }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- SGPA Distribution -->
+    <div class="col-12 mt-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> SGPA Distribution Analysis</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card text-center border-success">
+                            <div class="card-body">
+                                <h4 class="text-success">
+                                    {{ (passed_students + failed_students)|selectattr("sgpa", "ge", 9.0)|list|length }}
+                                </h4>
+                                <small>Distinction (9.0+)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center border-primary">
+                            <div class="card-body">
+                                <h4 class="text-primary">
+                                    {{ (passed_students + failed_students)|selectattr("sgpa", "ge", 8.0)|selectattr("sgpa", "lt", 9.0)|list|length }}
+                                </h4>
+                                <small>First Class (8.0-8.9)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center border-info">
+                            <div class="card-body">
+                                <h4 class="text-info">
+                                    {{ (passed_students + failed_students)|selectattr("sgpa", "ge", 7.0)|selectattr("sgpa", "lt", 8.0)|list|length }}
+                                </h4>
+                                <small>Second Class (7.0-7.9)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center border-warning">
+                            <div class="card-body">
+                                <h4 class="text-warning">
+                                    {{ (passed_students + failed_students)|selectattr("sgpa", "lt", 7.0)|list|length }}
+                                </h4>
+                                <small>Below 7.0</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
